@@ -39,8 +39,8 @@ module CapstoneDemoapp
 
     config.middleware.insert_before 0, "Rack::Cors" do
       allow do
-        origins /https:\/\/\w+\.github\.io/
-#        origins '*'
+#        origins /https:\/\/\w+\.github\.io/
+        origins '*'
         resource '/api/*', 
           :headers => :any, 
           :methods => [:get, :post, :put, :delete, :options]
