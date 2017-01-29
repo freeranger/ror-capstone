@@ -1,7 +1,4 @@
 # Capstone Demo Application
 
-Assignment 1.
+Assignment 2.
 
-Client source file locations:
-   Asset pipleine: app/assets
-   External: client/src
