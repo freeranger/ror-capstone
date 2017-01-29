@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   end
 
   get "/client-assets/:name.:format", :to => redirect("/client/client-assets/%{name}.%{format}")
-  # get "/", :to => redirect("/client/index.html")
+  get "/", :to => redirect("/client/index.html")
 
   get '/ui' => 'ui#index'
   get '/ui#' => 'ui#index'
