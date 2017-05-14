@@ -5,5 +5,10 @@ module Protectable
     def user_roles
       @user_roles ||= []
     end
+
+    def tags
+      @tags ||= []
+    end
+
   end
 end

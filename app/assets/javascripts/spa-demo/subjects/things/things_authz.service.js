@@ -32,7 +32,16 @@
     ThingsAuthz.prototype.canRemoveImage=function(thing) {
         return Authz.isOrganizer(thing) || Authz.isAdmin();
     };
-    
+    ThingsAuthz.prototype.canGetTags=function() {
+        return Authz.isAuthenticated();
+    };
+    ThingsAuthz.prototype.canUpdateTags=function(thing) {
+        if (!thing) {
+            return false;
+        } else {
+            return !thing.id ? this.canCreate() : Authz.isOrganizer(thing);
+        }
+    };
     return new ThingsAuthz();
   }
 })();

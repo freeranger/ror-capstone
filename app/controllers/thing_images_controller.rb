@@ -26,7 +26,7 @@ class ThingImagesController < ApplicationController
     #@things=policy_scope(Thing.not_linked(image))
     #need to exclude admins from seeing things they cannot link
     @things=Thing.not_linked(image)
-    @things=ThingPolicy::Scope.new(current_user,@things).user_roles(true,false)
+    @things=ThingPolicy::Scope.new(current_user,@things).user_roles_and_tags(true,false)
     @things=ThingPolicy.merge(@things)
     render "things/index"
   end

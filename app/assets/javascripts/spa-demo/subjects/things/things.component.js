@@ -1,3 +1,10 @@
+// IE9 compatability
+if(typeof String.prototype.trim !== 'function') {
+    String.prototype.trim = function() {
+        return this.replace(/^\s+|\s+$/g, '');
+    }
+}
+
 (function() {
   "use strict";
 
@@ -20,6 +27,34 @@
         authz: "<"
       }
     })
+      .filter('hasTags', function() {
+        return function(things, raw_tags) {
+            if (!raw_tags || raw_tags.trim() === '') return things;
+            // split the tags and trim them and remove any empty ones.
+            raw_tags = raw_tags.split(',');
+            var tags_arr = [];
+            for (var i=0; i < raw_tags.length; i++) {
+                var t=raw_tags[i].trim();
+                if (t.length > 0) tags_arr.push(t);
+            }
+
+            var out = [];
+            for(var i=0; i< things.length;i++) {
+                var thing = things[i];
+                if (!thing.tags || thing.tags.length ===0) continue; // it has no tags so it won't match
+                var matches = true;
+                for(var j=0;j<tags_arr.length; j++) {
+                    // if the tag is not in the list then we don't want this thing.
+                    if(thing.tags.indexOf(tags_arr[j]) === -1) {
+                        matches = false;
+                        break;
+                    }
+                }
+                if (matches) out.push(thing);
+            }
+            return out;
+        };
+      })
     ;
 
 

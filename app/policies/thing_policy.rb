@@ -39,22 +39,32 @@ class ThingPolicy < ApplicationPolicy
     organizer_or_admin?
   end
 
+  def manage_tags?
+    organizer?
+  end
+
   class Scope < Scope
-    def user_roles members_only=true, allow_admin=true
+    def user_roles_and_tags members_only=true, allow_admin=true
+      no_tags = @user.nil? 
       include_admin=allow_admin && @user && @user.is_admin?
       member_join = members_only && !include_admin ? "join" : "left join"
       joins_clause=["#{member_join} Roles r on r.mname='Thing'",
                     "r.mid=Things.id",
-                    "r.user_id #{user_criteria}"].join(" and ")
-      scope.select("Things.*, r.role_name")
+                    "r.user_id #{user_criteria}"
+                    ].join(" and ")
+      joins_clause += " left join thing_Tags tt on tt.thing_id=Things.id" unless no_tags
+      select = "Things.*, r.role_name"
+      select += ", tt.tag" unless no_tags
+      scope.select(select)
            .joins(joins_clause)
            .tap {|s|
              if members_only
                s.where("r.role_name"=>[Role::ORGANIZER, Role::MEMBER])
              end}
     end
+
     def resolve
-      user_roles 
+      user_roles_and_tags
     end
   end
 end

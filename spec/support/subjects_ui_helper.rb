@@ -8,7 +8,7 @@ module SubjectsUiHelper
   end
 
   def get_linkables image
-    things=ThingPolicy::Scope.new(current_user, Thing.not_linked(image)).user_roles(true,false)
+    things=ThingPolicy::Scope.new(current_user, Thing.not_linked(image)).user_roles_and_tags(true,false)
     things=ThingPolicy.merge(things)
   end
 

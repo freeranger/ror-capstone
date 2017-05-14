@@ -40,7 +40,6 @@ RSpec.describe "Things", type: :request do
     it "creates and has user_roles #{user_roles}" do
       jpost things_path, thing_props
       expect(response).to have_http_status(:created)
-      #pp parsed_body
       payload=parsed_body
       expect(payload).to include("id")
       expect(payload).to include("name"=>thing_props[:name])
@@ -93,6 +92,14 @@ RSpec.describe "Things", type: :request do
       expect(payload).to_not include("user_roles")
     end
   end
+  shared_examples "tags redacted" do
+    it "get does not include tags" do
+      jget thing_path(thing)
+      expect(response).to have_http_status(:ok)
+      payload=parsed_body
+      expect(payload).to_not include("tags")
+    end
+  end
   shared_examples "field(s) not redacted" do |user_roles|
     it "list does include notes and user_roles #{user_roles}" do
       jget things_path
@@ -122,13 +129,25 @@ RSpec.describe "Things", type: :request do
       expect(payload["user_roles"].to_a).to include(*user_roles)
     end
   end
+  shared_examples "tags not redacted" do
+    it "get does include tags" do
+      jget thing_path(thing)
+      expect(response).to have_http_status(:ok)
+      payload=parsed_body
+      expect(payload).to include("tags")
+    end
+  end
 
   describe "Thing authorization" do
     let(:account)  { signup FactoryGirl.attributes_for(:user) }
     let(:thing_props)   { FactoryGirl.attributes_for(:thing, :with_fields) }
     let(:thing_resources) { 3.times.map { create_resource things_path, :thing } }
     let(:thing_id)   { thing_resources[0]["id"] }
-    let(:thing)      { Thing.find(thing_id) }
+    let(:thing)      { thing = Thing.find(thing_id)
+                       thing.thing_tags << FactoryGirl.build_list(:thing_tag, 2, :thing=>thing)
+                       Thing.find(thing_id)
+                    }
+   
     before(:each) do
       login originator
       thing_resources
@@ -142,6 +161,7 @@ RSpec.describe "Things", type: :request do
       it_should_behave_like "cannot update", :unauthorized
       it_should_behave_like "cannot delete", :unauthorized
       it_should_behave_like "field(s) redacted"
+      it_should_behave_like "tags redacted"
     end
     context "caller is authenticated no role" do
       before(:each) do 
@@ -151,6 +171,7 @@ RSpec.describe "Things", type: :request do
       it_should_behave_like "cannot update", :forbidden
       it_should_behave_like "cannot delete", :forbidden
       it_should_behave_like "field(s) redacted"
+      it_should_behave_like "tags not redacted"
     end
 
     context "caller is member" do
@@ -162,6 +183,7 @@ RSpec.describe "Things", type: :request do
       it_should_behave_like "cannot update", :forbidden
       it_should_behave_like "cannot delete", :forbidden
       it_should_behave_like "field(s) not redacted", [Role::MEMBER]
+      it_should_behave_like "tags not redacted"
     end
 
     context "caller is organizer" do

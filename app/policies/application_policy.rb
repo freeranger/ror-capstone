@@ -73,12 +73,14 @@ class ApplicationPolicy
 
   def self.merge(scope)
     prev=nil
-    scope.select { |r| 
+    scope.select { |r|
       if prev && prev.id == r.id
         prev.user_roles << r.role_name if r.role_name
+        prev.tags << r.tag if r.respond_to?(:tag) && r.tag
         false #toss this
       else 
         r.user_roles << r.role_name if r.role_name
+        r.tags << r.tag if r.respond_to?(:tag) && r.tag
         prev = r
       end
     }

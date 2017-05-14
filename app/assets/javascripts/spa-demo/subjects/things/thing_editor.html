@@ -27,6 +27,16 @@
     <span class="invalid">{{$ctrl.item.errors.description}}</span>
   </div>
 
+  <div class="thing-tags row col-lg-12" ng-show="$ctrl.authz.canGetTags && ($ctrl.authz.canUpdateTags || $ctrl.item.tags.length > 0) && thingform.$valid">
+    <label class="col-xs-3">Tags:</label>
+    <input class="col-xs-9"
+              name="thing-tags"
+              ng-model="$ctrl.item.tags"
+              ng-readonly="!$ctrl.authz.canUpdateTags"
+              type="text"
+              />
+  </div>
+
   <div class="thing-notes row col-lg-12"
        ng-show="$ctrl.authz.canGetDetails && thingform.$valid">
     <label class="col-xs-3">Notes:</label>
@@ -72,6 +82,7 @@
     </ul>
     <span class="invalid">{{$ctrl.item.errors.images}}</span>
   </div>
+    
 
   <div class="thing-controls"
        ng-show="$ctrl.authz.authenticated">

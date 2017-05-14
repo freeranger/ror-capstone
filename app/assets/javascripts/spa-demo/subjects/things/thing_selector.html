@@ -1,6 +1,18 @@
+<div class="thing-tags row col-lg-12" ng-show="$ctrl.authz.canGetTags && $ctrl.items && $ctrl.items.length > 0">
+    <label class="col-xs-3">Show only Things with the following Tag(s):</label>
+    <input class="col-xs-3"
+           id="tags"
+           ng-model="tags"
+           type="text"
+    />
+    <div class="col-xs-6">
+        (comma separated list)</i>
+    </div>
+</div>
+<br/><br/>
 <div class="thing-list" ng-show="$ctrl.authz.canQuery">
   <ul>
-    <li ng-repeat="item in $ctrl.items | orderBy:'name'">
+    <li ng-repeat="item in $ctrl.items | hasTags:tags |orderBy:'name'">
       <a ui-sref="things({id:item.id})">
          <span class="thing_id id">{{item.id}}</span>
          {{item.name}}
