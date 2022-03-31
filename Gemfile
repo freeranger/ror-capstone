@@ -13,7 +13,7 @@ group :development do
 end
 
 group :development, :test do
-  gem 'webrick', '~>1.3', '>=1.3.1' #, :platforms=>[:mingw, :mswin, :x64_mingw, :jruby]
+  gem 'webrick', '~>1.4' #, :platforms=>[:mingw, :mswin, :x64_mingw, :jruby]
   gem 'tzinfo-data', :platforms=>[:mingw, :mswin, :x64_mingw, :jruby]
   gem 'httparty', '~>0.14', '>=0.14.0'
   gem 'byebug', '~>9.0', '>=9.0.6'
